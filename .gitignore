@@ -6,4 +6,8 @@ include/
 
 *.cfg
 
-auth/
+*.password
+*.secret_iv
+*.secret_key
+
+__pycache__/
