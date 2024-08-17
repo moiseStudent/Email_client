@@ -1,0 +1,8 @@
+Wheel-Version: 1.0
+Generator: bdist_wheel (0.37.1)
+Root-Is-Purelib: false
+Tag: cp35-abi3-manylinux_2_5_i686
+Tag: cp35-abi3-manylinux1_i686
+Tag: cp35-abi3-manylinux_2_17_i686
+Tag: cp35-abi3-manylinux2014_i686
+
