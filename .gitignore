@@ -1,13 +1,8 @@
 bin/
-
 lib/
-
 include/
-
 *.cfg
-
 *.password
 *.secret_iv
 *.secret_key
-
 __pycache__/

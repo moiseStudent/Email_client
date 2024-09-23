@@ -1,4 +1,4 @@
-### Email client
+### Email client (CLI)
 import os
 import readerGmail
 import senderGmail
@@ -7,6 +7,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import time
 import threading ### Multi hilos
+import argparse
 
 ### Setting and email login
 class LoginEmail:
@@ -89,69 +90,75 @@ class LoginEmail:
         return tools
 
 
-### User Interface
-def user_interface():
+def login():
 
-    print(f"\t{Fore.RED}.:|Email Client V1|:.{Fore.RESET}")
-    print()
-    print("""
-1. LOGIN EMAIL - si no esta logeado
-2. INICIAR CHAT
-3. USAR SERVIDOR WEB LOCAL - (no disponible)
-4. SALIR
-    """)
+    print('Email Login -> ')
 
-### Menu option
-while True:
+    username = input("Por favor, Ingrese su correo electronico: ")
+    password = input("Por favor, Ingrese su clave de aplicacion: ")
 
-    ### User Interface:
-    user_interface()
-    option = input("Ingrese una opcion -> ")
+    login = LoginEmail(
+        username,
+        password
+    )
 
-    if option == '1':
-        print('Login')
+    reader = gmail_tools[0]
+    sender = gmail_tools[1]
 
-        username = input("Por favor, Ingrese su correo electronico: ")
-        password = input("Por favor, Ingrese su clave de aplicacion: ")
+    print("Login Exitoso, sus credenciales han sido guardadas.")
 
-        login = LoginEmail(
-            username,
-            password
-        )
+### (arguemnt - --all) (argument - --only="Email adress")
+def read_email(all=True, only=False):
 
-        gmail_tools = login.login()
-
-        reader = gmail_tools[0]
-        sender = gmail_tools[1]
-        print("Sus credenciales han sido guardadas.")
+    if all:
+        ### Leer todos los mensajes
+        pass
     
-    elif option == '2':
-        email_wait = input("Ingrese el email de quien espera mensaje: ")
+    elif only:
+        ### Read email only one adress
+        try:
+            email_adress = input('Ingrese el email de quien espera mensaje -> ')
+            new_message = reader.wait_email(email_adress)
+        except:
+            pass
+    pass
 
-        def daemon_read_email():
-            while True:
-                time.sleep(1) ### Esperar 10 s entre cada verificacion
-                new_email = reader.wait_email(email_wait)
+def write_email():
+    try:
+        email_receiver = str(input("A quien deseas enviarle el E-mail -> "))
+        email = str(input("Ingrese su mensaje: "))
+
+        sender.send(email_receiver, 'default', email)
+
         
-        ### Thread - Hilo para leer mensajes
-        hilo_mensajes = threading.Thread(target=daemon_read_email)
-         ### Permite que el hilo se cierre cuando el programa principal termina
-        hilo_mensajes.daemon = True
-        hilo_mensajes.start()
 
-        while True:
+    except:
+        pass
+    pass
 
-            sms = None
 
-            if sms == None:
-                sms = input("\nMensaje: ")
-                sender.send(email_wait, 'default', sms)
-                
-            elif sms != None:
-                sms = None
-    
-    elif option == '3':
-        exit()
-    
-    else:
-        print("Wey!!, Opcion no disponible.")
+### Make an object for argparse
+parser = argparse.ArgumentParser(description='Controles para manejo de email')
+
+
+# Crear subparsers
+subparsers = parser.add_subparsers(dest='comando', help='Comandos disponibles')
+
+
+### Test login
+parser_a = subparsers.add_parser('login', help='Inicia la session para poder enviar emails')
+parser_a.set_defaults(func=login)
+
+
+
+
+# Analizar los argumentos
+args = parser.parse_args()
+
+if hasattr(args, 'func'):
+    args.func()
+else:
+    parser.print_help()
+
+
+### Usar un servidor web flask para una mini interfaz con un arguemnto
